@@ -12,7 +12,7 @@
 // initialize the stepper library
 Stepper Stepper_mot(Stepper_steps, STPR1, STPR2, STPR3, STPR4);
 Servo Servo_mot;
-int position_counter, programmed_length_data, mottor_speed_data, servo_pos_data,commands_counter, servo_adjust_pos;
+int position_counter, programmed_length_data, mottor_speed_data, servo_pos_data,commands_counter, servo_adjust_pos,home_return_speed;
 int commands_stack_length[10],commands_stack_speed[10],commands_stack_servo[10];
 String serial_input;
 bool error_flag, ready_flag, execute_flag, start_exec_pos, home_flag, first_start, toggle_led, busy_flag,start_exec_pos_init;
@@ -52,6 +52,7 @@ void setup() {
   servo_pos_data=0;
   commands_counter=0;
   servo_adjust_pos=0;
+  home_return_speed=10;//Variable to control the speed of the return to home, Init speed set to safety 10 (slow)
   ready_flag=false;
   execute_flag=false;
   start_exec_pos=false;
@@ -99,14 +100,15 @@ if(home_flag){
     }   
 }
 //-----Wait for configuration commands
-//Set segment value strings is SET,LXXX,MSXX,SVXX
+//Set segment value strings is SET,LXXX,MSXX,SVXX,RXX
+//Example SET,L100,MS10,SV90,R10
 if(serial_listen & !busy_flag){
  while(Serial.available()){
         serial_input = Serial.readString();
         serial_input.trim();
         //-----For a SET command
         if(serial_input.substring(0,3) == "SET"){ //Check for SET command                  
-          if(serial_input.length() != 18){ //Check for correct command lenght
+          if(serial_input.length() != 22){ //Check for correct command lenght
           	error_flag=true;
           	break;
           	}
@@ -132,6 +134,15 @@ if(serial_listen & !busy_flag){
             if(serial_input.substring(14,16) == "SV"){ 
             servo_pos_data= serial_input.substring(16,18).toInt();
             //Serial.println(servo_pos_data);
+           }
+           else{
+           error_flag=true;
+            break;
+            }
+           //Check for return speed
+            if(serial_input.substring(19,20) == "R"){ 
+            home_return_speed= serial_input.substring(20,22).toInt();
+            //Serial.println(home_return_speed);
            }
            else{
            error_flag=true;
@@ -189,7 +200,9 @@ if(serial_listen & !busy_flag){
               Serial.print(" MS:");
               Serial.print(commands_stack_speed[i]);
               Serial.print(" SV:");
-              Serial.println(commands_stack_servo[i]);
+              Serial.print(commands_stack_servo[i]);
+              Serial.print(" R:");
+              Serial.println(home_return_speed);              
              }
           }else{
             if(DEBUG)Serial.println("Empty Stack");
@@ -281,12 +294,14 @@ if(start_exec_pos_init){
     busy_flag = true;
     start_exec_pos_init=false;
     return_length=0;
+    Serial.print("Setting return speed to:");
+    Serial.println(home_return_speed);
 }
 while(start_exec_pos){
   //Set Servo
    Servo_mot.write(90);
-  //Set motor position to a slow movement (ensure safe return)
-  Stepper_mot.setSpeed(10);
+  //Set motor speed to user set return speed
+  Stepper_mot.setSpeed(home_return_speed);
   //Set motor movement X steps
   Stepper_mot.step(-motor_movement_res);
   //Add steps to counter
