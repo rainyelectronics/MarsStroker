@@ -13,11 +13,12 @@
 Stepper Stepper_mot(Stepper_steps, STPR1, STPR2, STPR3, STPR4);
 Servo Servo_mot;
 int position_counter, programmed_length_data, mottor_speed_data, servo_pos_data,commands_counter, servo_adjust_pos,home_return_speed;
-int commands_stack_length[10],commands_stack_speed[10],commands_stack_servo[10];
+//int commands_stack_length[10],commands_stack_speed[10],commands_stack_servo[10];
+float commands_stack_length[10],commands_stack_speed[10],commands_stack_servo[10];
 String serial_input;
 bool error_flag, ready_flag, execute_flag, start_exec_pos, home_flag, first_start, toggle_led, busy_flag,start_exec_pos_init;
 bool serial_listen;
-float motor_movement_res = 10;
+float motor_movement_res = 10,total_time;
 double return_length;
 
 #define DEBUG true
@@ -53,6 +54,7 @@ void setup() {
   commands_counter=0;
   servo_adjust_pos=0;
   home_return_speed=10;//Variable to control the speed of the return to home, Init speed set to safety 10 (slow)
+  total_time=0;//Variable used to calculate total time of movement
   ready_flag=false;
   execute_flag=false;
   start_exec_pos=false;
@@ -204,6 +206,31 @@ if(serial_listen & !busy_flag){
               Serial.print(" R:");
               Serial.println(home_return_speed);              
              }
+          }else{
+            if(DEBUG)Serial.println("Empty Stack");
+          }
+           Serial.println("ACK");          
+        }
+       //------For TIME command
+        else if(serial_input.substring(0,4) == "TIME"){ //Check for TIME command
+          //Print times
+          if(commands_counter>0){
+          	total_time=0.0;
+          	//Calculate total time
+          	for(int i=0; i<commands_counter;i++){
+          		total_time+=(60/commands_stack_speed[i])*(commands_stack_length[i]/200);
+          	}
+          	//Print total time:
+		  	Serial.print("T:");
+		  	Serial.print(total_time);
+		  	Serial.print(",P:");
+            for(int i=0; i<commands_counter;i++){
+              Serial.print((60/commands_stack_speed[i])*(commands_stack_length[i]/200));
+              if(i<(commands_counter-1)){
+              	Serial.print(",");
+              }
+             }
+            Serial.println();              
           }else{
             if(DEBUG)Serial.println("Empty Stack");
           }
