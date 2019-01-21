@@ -294,8 +294,6 @@ if(start_exec_pos_init){
     busy_flag = true;
     start_exec_pos_init=false;
     return_length=0;
-    Serial.print("Setting return speed to:");
-    Serial.println(home_return_speed);
 }
 while(start_exec_pos){
   //Set Servo

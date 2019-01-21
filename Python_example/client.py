@@ -25,7 +25,7 @@ print '>> Send complete movement configuration'
 #The first value represents the lenght in 'digital units', when the total movement possible is
 #100 units. The second value is the motor speed, which can be used between the values of 0-16
 #The third value is the servo angle, which can be 0-180
-err=stroker.send_movement_segment(100,12,20)
+err=stroker.send_movement_segment(100,12,20,10)
 if err!= stroker_prot.ERR_OK:
 	print "Error on the command"
 #Clear the previous movement configuration
@@ -35,13 +35,13 @@ if err!= stroker_prot.ERR_OK:
 	print "Error on the command"
 #Set a new movement configuration, parted in 3 segments. Increasing speed and decreasing angle
 print '>> Send new movement configuration in 3 segments'
-err=stroker.send_movement_segment(33,8,60)
+err=stroker.send_movement_segment(33,8,60,10)
 if err!= stroker_prot.ERR_OK:
 	print "Error on the command"
-err=stroker.send_movement_segment(33,10,50)
+err=stroker.send_movement_segment(33,10,50,10)
 if err!= stroker_prot.ERR_OK:
 	print "Error on the command"
-err=stroker.send_movement_segment(34,12,40)
+err=stroker.send_movement_segment(34,12,40,10)
 if err!= stroker_prot.ERR_OK:
 	print "Error on the command"
 #Start movment of the robot, print position values until end of movement

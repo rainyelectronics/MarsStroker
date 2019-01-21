@@ -50,12 +50,13 @@ class stroker_descriptor:
 			if err==ERR_OK:
 				flag_done=True
 	#Send a movement segment
-	def send_movement_segment(self,distance,speed,angle):
+	def send_movement_segment(self,distance,speed,angle,return_speed):
 		#Create Text string, the format is
-		# SET,LXXX,MSXX,SVXX
+		# SET,LXXX,MSXX,SVXX,RXX
 		#Where after L the 3 digit value is the distance, from 0 to 100
 		#MS 2 digit value is the speed (2-16) and SV is the servo angle (0-180)
-		data="SET,L%03d,MS%02d,SV%02d" % (distance,speed,angle)
+		#and R is the return speed 2 digit value (2-16)
+		data="SET,L%03d,MS%02d,SV%02d,R%02d" % (distance,speed,angle,return_speed)
 		self.ser_write(data)
 		time.sleep(0.05)
 		return self.check_ack()
