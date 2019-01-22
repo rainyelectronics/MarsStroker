@@ -1,0 +1,52 @@
+Commands to be send by the user:
+
+SET:
+The set command is used to configure the movement of the stroker. The command has the next structure:
+		SET,LXXX,MSXX,SVXX,RXX
+Where each 'X' character has to be send as a number. 
+L - 	Represents the lenght of the movement segment. It can be from 1 to 100, and represent the percentage of the total movement that this segment represents.
+MS -	Represents the motor speed for this segment. It can be from 2-16.
+SV -	Represents the angle of the servomotor (angle of the brush) for this segment. It can be 0-180
+R - 	Represents the return speed for the motor. It can be 2-16. The last speed sent (as in the last programmed segment) will be used. NOTE: Fast return speeds might cause issues with the motor. 
+
+READ:
+The command is sent simply as 'READ', without any extra parameters or values. The response from the system is all the configured segments. The format returned is:
+L:XX MS:XX SV:XX R:XX
+L:XX MS:XX SV:XX R:XX
+With a list of the lenght of the programmed segments.
+
+CLEAR:
+The command is sent simply as 'CLEAR', without any extra parameters or values. This command erases all the segments in the stack. 
+
+TIME:
+The time commands is sent simply as 'TIME', without any extra parameters or values. This command is used to obtain the total and partial time required for the movement. The is given in the next format:
+
+T:X.XX,P:X.XX,X.XX,...
+After the 'T:', the next value with 2 decimals is the total time of the movement in seconds. The total time as for the 100% of the lenght. After the 'P:', the next values, separeted by comas, are the time lenght of each programmed segment. 
+
+START:
+If the stack is full (the summatory of the segments lenght is total to 100), this command starts the execution of the movement. 
+
+After a START command, the stack is not reseted or cleared, therefore it is necessary to use a 'CLEAR' command if it is desired to change the segments.  
+
+
+
+
+Operation Example. Comments are after the '#' character: 
+#Set a segment of 50% of the movement, with a speed of 10, a brush position of 90 degrees and a return speed of 10.
+SET,L050,MS10,SV90,R10
+# Stroker reply with an acknowledge
+ACK
+#Ask for a list of the programmed segments
+READ
+#Stroker reply with
+L:50 MS:10 SV:90 R:10
+ACK#Set a segment of 50% of the movement, with a speed of 15, a brush position of 60 degrees and a return speed of 10.
+SET,L050,MS15,SV60,R10
+#Stroker reply with acknowledge
+ACK
+#Send a time request, to know the time of the movement
+TIME
+#Stroker reply the total time of 2.5 seconds, and the time of each programmed segment
+T:2.50,P:1.50,1.00
+ACK

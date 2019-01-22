@@ -13,7 +13,6 @@
 Stepper Stepper_mot(Stepper_steps, STPR1, STPR2, STPR3, STPR4);
 Servo Servo_mot;
 int position_counter, programmed_length_data, mottor_speed_data, servo_pos_data,commands_counter, servo_adjust_pos,home_return_speed;
-//int commands_stack_length[10],commands_stack_speed[10],commands_stack_servo[10];
 float commands_stack_length[10],commands_stack_speed[10],commands_stack_servo[10];
 String serial_input;
 bool error_flag, ready_flag, execute_flag, start_exec_pos, home_flag, first_start, toggle_led, busy_flag,start_exec_pos_init;
@@ -198,11 +197,11 @@ if(serial_listen & !busy_flag){
           if(commands_counter>0){
             for(int i=0; i<commands_counter;i++){
               Serial.print("L:");
-              Serial.print(commands_stack_length[i]);
+              Serial.print(commands_stack_length[i],0);
               Serial.print(" MS:");
-              Serial.print(commands_stack_speed[i]);
+              Serial.print(commands_stack_speed[i],0);
               Serial.print(" SV:");
-              Serial.print(commands_stack_servo[i]);
+              Serial.print(commands_stack_servo[i],0);
               Serial.print(" R:");
               Serial.println(home_return_speed);              
              }
