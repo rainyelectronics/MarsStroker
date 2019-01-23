@@ -322,8 +322,8 @@ if(start_exec_pos_init){
     return_length=0;
 }
 while(start_exec_pos){
-  //Set Servo
-   Servo_mot.write(90);
+  //Set Servo to the last used servo position, by not changing it
+   //Servo_mot.write(90);
   //Set motor speed to user set return speed
   Stepper_mot.setSpeed(home_return_speed);
   //Set motor movement X steps
