@@ -21,7 +21,7 @@ bool serial_listen, forward_flag;
 float motor_movement_res = 10,total_time;
 double return_length;
 
-#define DEBUG false
+#define DEBUG true
 void setup() {
   // set the initial motor speed
   Stepper_mot.setSpeed(10);
