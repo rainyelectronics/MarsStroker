@@ -379,6 +379,8 @@ while(execute_flag){
     if(completed_length >= 100){//End of forward movement      
         execute_flag=false;
         execute_flag_back=true;
+        //Signal the start of return movement, so the HOST is aware of the direction of movement
+        if(DEBUG) Serial.println("Starting return to init position");
     }
 }//End of forward execution loop
 
