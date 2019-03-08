@@ -21,7 +21,11 @@ bool serial_listen, forward_flag;
 float motor_movement_res = 10,total_time;
 double return_length;
 
+//Static configuration flags/defines
 #define DEBUG true
+#define LIVE_POS false
+
+
 void setup() {
   // set the initial motor speed
   Stepper_mot.setSpeed(10);
@@ -359,12 +363,14 @@ while(execute_flag){
     //is obtained by deviding half a revolution steps by the amount of steps taken
     completed_length +=(motor_movement_res/(Stepper_steps/2))*100;
     //Send by Serial the new position
-    Serial.print("L:");
-    Serial.print(completed_length);
-    Serial.print(" MS:");
-    Serial.print(commands_stack_speed[completed_stack_counter]);
-    Serial.print(" SV:");
-    Serial.println(commands_stack_servo[completed_stack_counter]);
+    if(LIVE_POS){ //Print in case the live position is defined as true
+    	Serial.print("L:");
+	    Serial.print(completed_length);
+    	Serial.print(" MS:");
+	    Serial.print(commands_stack_speed[completed_stack_counter]);
+	    Serial.print(" SV:");
+	    Serial.println(commands_stack_servo[completed_stack_counter]);
+    }
     //Toggle LED
     if(toggle_led){
       digitalWrite(BUSY_LED,HIGH);//Set the ON LED
@@ -405,12 +411,14 @@ while(execute_flag_back){
     //is obtained by deviding half a revolution steps by the amount of steps taken
     completed_length_back +=(motor_movement_res/(Stepper_steps/2))*100;
     //Send by Serial the new position
-    Serial.print("R:");
-    Serial.print(completed_length_back);
-    Serial.print(" MS:");
-    Serial.print(commands_stack_speed_back[completed_stack_counter_back]);
-    Serial.print(" SV:");
-    Serial.println(commands_stack_servo_back[completed_stack_counter_back]);
+    if(LIVE_POS){ //Print in case the live position is defined as true    
+	    Serial.print("R:");
+	    Serial.print(completed_length_back);
+	    Serial.print(" MS:");
+	    Serial.print(commands_stack_speed_back[completed_stack_counter_back]);
+	    Serial.print(" SV:");
+	    Serial.println(commands_stack_servo_back[completed_stack_counter_back]);
+    }
     //Toggle LED
     if(toggle_led){
       digitalWrite(BUSY_LED,HIGH);//Set the ON LED
